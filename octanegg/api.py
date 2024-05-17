@@ -24,12 +24,12 @@ class Octane:
         return res.json()
 
     def get_events(self, name: Optional[str] = None, tier: Optional[str] = None, region: Optional[str] = None,
-                   mode: Optional[int] = None, group: Optional[str] = None, before: Optional[str] = None,
+                   mode: Optional[int] = None, group: Optional[str] = None, stages: Optional[str] = None, before: Optional[str] = None,
                    after: Optional[str] = None, date: Optional[str] = None, sort: Optional[str] = None,
                    order: Optional[str] = None, page: int = 1, per_page: int = 100) -> list:
         endpoint = f'{API_BASE_URL}/events'
         param_names = {'name', 'tier', 'region', 'mode', 'group', 'before', 'after', 'date', 'sort',
-                       'order', 'page'}
+                       'order', 'page', 'stages'}
 
         params = {'perPage': per_page}
         params |= {k: v for k, v in locals().items() if (k in param_names) and (v is not None)}
@@ -116,6 +116,13 @@ class Octane:
     def get_player(self, player_id: str) -> dict:
         endpoint = f'{API_BASE_URL}/players/{player_id}'
         result = self._get_results(endpoint)
+        return result
+    
+    #Returns the active roster of any team using the team id
+    def get_players_by_team_id(self, team_id: str) -> list:
+        endpoint = f'{API_BASE_URL}/players'
+        params = {'team': team_id}
+        result = self._get_results(endpoint, params).get('players')
         return result
 
     def get_teams(self, name: Optional[str] = None, sort: Optional[str] = None,
